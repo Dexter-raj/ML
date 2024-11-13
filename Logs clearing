@@ -1,0 +1,4 @@
+Get-WinEvent -LogName System | Where-Object { $_.Message -match "(?i)Network" }
+wevtutil cl System
+Restart-Service -Name "NlaSvc" -Force
+Restart-Service -Name "Netman" -Force
