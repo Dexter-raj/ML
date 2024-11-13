@@ -1,44 +1,46 @@
-!pip install mlxtend
-
 import pandas as pd
-import csv
+from mlxtend.frequent_patterns import apriori, association_rules
+import matplotlib.pyplot as plt
+
+# Load the dataset (header=None since there's no header)
+#dataset_path = 'Market_Basket_Optimisation.csv'
+data = pd.read_csv('/Market_Basket_Optimisation.csv', header=None)
+
+# Data Preprocessing
+# Transform dataset into a list of transactions
+transactions = []
+for i in range(0, data.shape[0]):
+    transaction = [str(data.values[i, j]) for j in range(0, data.shape[1]) if str(data.values[i, j]) != 'nan']
+    transactions.append(transaction)
+
+# Create a DataFrame with binary values for each item
 from mlxtend.preprocessing import TransactionEncoder
-from mlxtend.frequent_patterns import apriori,association_rules 
 
-dataset = []
-with open('Market_Basket_Optimisation.xls') as file:
-    reader = csv.reader(file,delimiter=',')
-    for row in reader:
-        dataset+=[row]
-
-dataset[0:10]
-
-len(dataset)
-
-#Transaction encoder makes a table of items bought as column names
-# and marks true for a person if he buys it 
-#helps in collecting all the unique items
 te = TransactionEncoder()
-x = te.fit_transform(dataset)
+te_ary = te.fit(transactions).transform(transactions)
+df = pd.DataFrame(te_ary, columns=te.columns_)
 
-x.shape
+# Train Apriori Algorithm on the dataset
+frequent_itemsets = apriori(df, min_support=0.01, use_colnames=True)
 
-#Making a pandas dataframe as datase
-df = pd.DataFrame(x,columns=te.columns_)
-df
+# Generate the association rules
+rules = association_rules(frequent_itemsets, metric='confidence', min_threshold=0.2)
 
-# 1. Find frequent itemset
-freq_itemset = apriori(df,min_support=0.01,use_colnames=True) # taking support as 10%
+# Display the rules
+print("Association Rules:")
+print(rules)
 
-freq_itemset
+# Visualize the list of rules
+plt.scatter(rules['support'], rules['confidence'], alpha=0.5)
+plt.xlabel('Support')
+plt.ylabel('Confidence')
+plt.title('Support vs Confidence')
+plt.show()
 
-# Find the rules
-rules = association_rules(freq_itemset,metric='confidence',
-min_threshold=0.30)
-rules
+# Modify hyperparameters and observe the changes in rules
+# Increase the minimum confidence to 0.5
+rules_high_confidence = association_rules(frequent_itemsets, metric='confidence', min_threshold=0.5)
 
-rules = rules[['antecedents','consequents','support','confidence']]
-
-rules.head()
-
-rules[rules['antecedents']=={'cake'}]
+# Display the rules with high confidence
+print("Association Rules with Higher Confidence:")
+print(rules_high_confidence)
