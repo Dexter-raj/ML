@@ -33,9 +33,9 @@ model_dt=DecisionTreeRegressor(random_state=1)
 model_rf=RandomForestRegressor(random_state=1)
 model_lr=LogisticRegression(random_state=1,max_iter=1000)
 
-model_lr.fit(x_train,y_train)
-model_dt.fit(x_train,y_train)
-model_rf.fit(x_train,y_train)
+model_lr.fit(x_train, y_train)  # Fit Logistic Regression
+model_dt.fit(x_train, y_train)  # Fit Decision Tree Regressor
+model_rf.fit(x_train, y_train)  # Fit Random Forest Regressor
 
 y_pred_dt=model_dt.predict(x_test)
 y_pred_rf=model_rf.predict(x_test)
