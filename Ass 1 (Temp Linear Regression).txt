@@ -36,3 +36,9 @@ plt.xlabel("Year")
 plt.ylabel("Temp")
 plt.title("Annual temp record")
 plt.legend()
+
+model = LinearRegression()
+model.fit(x, y)
+
+predicted_temp_2024 = model.predict([[2024]])
+print(f"Predicted temperature for 2024: {predicted_temp_2024[0]}")
